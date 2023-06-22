@@ -35,7 +35,7 @@ const create: IController = async (req, res) => {
     const user = await userService.create(params);
     return ApiResponse.result(res, user, httpStatusCodes.CREATED);
   } catch (e) {
-    if (e.code === constants.ERROR_CODE.DUPLICATED) {
+    if (e.code === constants.ERROR_CODE.DUPLICATED || e.code === constants.ERROR_CODE.SQLITE_DUPLICATED) {
       return ApiResponse.error(res, httpStatusCodes.CONFLICT, 'Email already exists.');
     }
     return ApiResponse.error(res, httpStatusCodes.BAD_REQUEST);

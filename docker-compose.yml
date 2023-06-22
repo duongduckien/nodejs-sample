@@ -1,0 +1,63 @@
+version: '3'
+
+services:
+  mysql:
+    build:
+      context: .
+      dockerfile: ./docker/services/mysql/Dockerfile
+    restart: always
+    container_name: ${DOCKER_APP_NAME}_mysql
+    networks:
+      - net
+    expose:
+      - ${DOCKER_MYSQL_PORT}
+    ports:
+      - "${DOCKER_MYSQL_PORTS}"
+    volumes:
+      - dbdata:/var/lib/mysql/
+    environment:
+      - MYSQL_DATABASE=${DOCKER_MYSQL_DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DOCKER_MYSQL_ROOT_PASSWORD}
+      - MYSQL_PASSWORD=${DOCKER_MYSQL_PASSWORD}
+      - MYSQL_TCP_PORT=${DOCKER_MYSQL_PORT}
+      - MYSQL_ROOT_HOST=%
+    command: [
+      '--character-set-server=utf8mb4',
+      '--collation-server=utf8mb4_unicode_ci',
+      '--default-authentication-plugin=mysql_native_password'
+    ]
+  node:
+    restart: on-failure
+    depends_on:
+      - mysql
+    build:
+      context: .
+      dockerfile: ./docker/services/node/Dockerfile
+    container_name: ${DOCKER_APP_NAME}_node
+    working_dir: ${DOCKER_APP_PATH}
+    networks:
+      - net
+    ports:
+      - "${DOCKER_NODE_PORTS}"
+    entrypoint: sh /bin/node/command.sh
+    volumes:
+      - .:${DOCKER_APP_PATH}
+      - ${DOCKER_APP_PATH}/node_modules
+      - ./docker/services/node/command-${NODE_ENV}.sh:/bin/node/command.sh
+    environment:
+      - DB_HOST=${DOCKER_APP_NAME}_mysql
+      - DB_USER=${DOCKER_MYSQL_USER}
+      - DB_PASSWORD=${DOCKER_MYSQL_PASSWORD}
+      - DB_NAME=${DOCKER_MYSQL_DB_NAME}
+      - DB_PORT=${DOCKER_MYSQL_PORT}
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+      - TOKEN_SECRET_KEY=${TOKEN_SECRET_KEY}
+
+networks:
+  net:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
