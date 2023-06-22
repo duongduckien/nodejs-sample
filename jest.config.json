@@ -1,0 +1,11 @@
+{
+  "verbose": true,
+  "rootDir": ".",
+  "preset": "ts-jest",
+  "testMatch": ["**/*.spec.ts", "**/*.test.ts"],
+  "coveragePathIgnorePatterns": ["mocks/"],
+  "moduleFileExtensions": ["ts", "js"],
+  "testEnvironment": "node",
+  "clearMocks": true,
+  "setupFiles": ["./src/configs/testing.config.ts"]
+}
