@@ -1,6 +1,10 @@
 # NodeJS Sample
 #### ExpressJS, Typescript, TypeORM, MySQL
 
+#### Reference blog:
+
+[NodeJS Boilerplate (Express, Typescript, TypeORM, MySQL)](https://ai-research.dev/nodejs-boilerplate-express-typescript-typeorm-mysql/)
+
 ## 1. Running project
 ### Stable environment
 
